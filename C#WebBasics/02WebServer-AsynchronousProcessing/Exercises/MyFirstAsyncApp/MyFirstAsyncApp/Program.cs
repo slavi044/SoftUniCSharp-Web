@@ -23,7 +23,7 @@
             {
                 var client = tcpListener.AcceptTcpClient();
 
-                Thread thread = new Thread(() =>
+                Task thread = Task.Run(() =>
                 {
                     using (Stream stream = client.GetStream())
                     {
@@ -45,12 +45,10 @@
                         for (int i = 0; i < 10000000; i++)
                         {
                             Thread.Sleep(1000);
-                            stream.Write(responceBytes);
+                            stream.WriteAsync(responceBytes);
                         }
                     }
                 });
-
-                thread.Start();
             }
         }
     }
