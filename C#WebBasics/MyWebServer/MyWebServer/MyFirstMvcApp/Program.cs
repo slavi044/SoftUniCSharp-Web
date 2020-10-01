@@ -12,21 +12,29 @@
             IHttpServer server = new HttpServer();
             
             server.AddRoute("/", HomePage);
+            server.AddRoute("/favicon,ico", Favicon);
             server.AddRoute("/about", About);
             server.AddRoute("/about/users/login", Login);
 
             await server.StartAsync(80);
         }
-     
-        static HttpResponse HomePage(HttpRequest request)
+
+        private static HttpResponse Favicon(HttpRequest arg)
         {
             throw new NotImplementedException();
         }
-        static HttpResponse About(HttpRequest request)
+
+        private static HttpResponse HomePage(HttpRequest request)
         {
             throw new NotImplementedException();
         }
-        static HttpResponse Login(HttpRequest request)
+
+        private static HttpResponse About(HttpRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static HttpResponse Login(HttpRequest request)
         {
             throw new NotImplementedException();
         }
