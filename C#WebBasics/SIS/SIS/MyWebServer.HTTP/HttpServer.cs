@@ -1,8 +1,8 @@
-﻿namespace MWS.HTTP
+﻿namespace SIS.HTTP
 {
     using System;
     using System.Collections.Generic;
-    using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
     using System.Text;
@@ -10,9 +10,6 @@
 
     public class HttpServer : IHttpServer
     {
-        private const int BufferSize = 4096;
-        private const string NewLine = "\r\n";
-
         IDictionary<string, Func<HttpRequest, HttpResponse>> routeTable =
             new Dictionary<string, Func<HttpRequest, HttpResponse>>();
 
@@ -43,53 +40,61 @@
 
         private async Task ProcessClientAsync(TcpClient tcpClient)
         {
-            using (NetworkStream stream = tcpClient.GetStream())
+            try
             {
-                int position = 0;
-                byte[] buffer = new byte[BufferSize];
-                List<byte> data = new List<byte>();
-
-                while (true)
+                using (NetworkStream stream = tcpClient.GetStream())
                 {
-                    int count = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    int position = 0;
+                    byte[] buffer = new byte[HttpConstants.BufferSize];
+                    List<byte> data = new List<byte>();
 
-                    position += count;
-
-                    if (count < buffer.Length)
+                    while (true)
                     {
-                        byte[] partialBuffer = new byte[count];
-                        Array.Copy(buffer, partialBuffer, count);
+                        int count = await stream.ReadAsync(buffer, 0, buffer.Length);
 
-                        data.AddRange(partialBuffer);
+                        position += count;
 
-                        break;
+                        if (count < buffer.Length)
+                        {
+                            byte[] partialBuffer = new byte[count];
+                            Array.Copy(buffer, partialBuffer, count);
+
+                            data.AddRange(partialBuffer);
+
+                            break;
+                        }
+                        else
+                        {
+                            data.AddRange(buffer);
+                        }
                     }
-                    else
-                    {
-                        data.AddRange(buffer);
-                    }
+
+                    string requestAsString = Encoding.UTF8.GetString(data.ToArray());
+
+                    HttpRequest requset = new HttpRequest(requestAsString);
+                    Console.WriteLine(requestAsString);
+
+                    //TODO:Extract info requstAsString
+
+                    string responseHtml = "<h1>Welcome</h1>" + requset.Headers.FirstOrDefault(x => x.Name == "User-Agent")?.Value;
+                    byte[] responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
+
+                    HttpResponse response = new HttpResponse("text/html", responseBodyBytes);
+                    response.Headers.Add(new Header("Server", "SIS Server 1.0"));
+                    response.Cookies.Add(new ResponseCookie("sid", Guid.NewGuid().ToString()) { HttpOnly = true, MaxAge = 60 * 24 * 60 * 60 });
+
+                    byte[] responseHeaderBytes = Encoding.UTF8.GetBytes(response.ToString());
+
+                    await stream.WriteAsync(responseHeaderBytes, 0, responseHeaderBytes.Length);
+                    await stream.WriteAsync(response.Body, 0, response.Body.Length);
                 }
 
-                string requestAsString = Encoding.UTF8.GetString(data.ToArray());
-                Console.WriteLine(requestAsString);
-
-                //TODO:Extract info requstAsString
-
-                string responseHtml = "<h1>Welcome</h1>";
-                byte[] responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
-
-                string responseHttp = "HTTP 1.1 200 OK" + NewLine +
-                    "Server: MW Server 1.0 " + NewLine +
-                    "Content-Type: text/html" + NewLine +
-                    "Content-Length: " + responseBodyBytes.Length + NewLine +
-                    NewLine;
-                byte[] responseHeaderBytes = Encoding.UTF8.GetBytes(responseHttp);
-                
-                await stream.WriteAsync(responseHeaderBytes);//if throw err 0, rhb.Length
-                await stream.WriteAsync(responseBodyBytes);//if throw err 0, rbb.Length
+                tcpClient.Close();
             }
-
-            tcpClient.Close();
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }

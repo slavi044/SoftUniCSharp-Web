@@ -1,4 +1,4 @@
-﻿namespace MWS.HTTP
+﻿namespace SIS.HTTP
 {
     using System;
     using System.Threading.Tasks;

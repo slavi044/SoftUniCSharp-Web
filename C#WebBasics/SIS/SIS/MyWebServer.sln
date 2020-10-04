@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MWS.HTTP", "MyWebServer.HTTP\MWS.HTTP.csproj", "{D6716984-0C9F-4B0E-A08B-E3650FD432E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIS.HTTP", "MyWebServer.HTTP\SIS.HTTP.csproj", "{D6716984-0C9F-4B0E-A08B-E3650FD432E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MWS.MvcFramework", "MWS.MvcFramework\MWS.MvcFramework.csproj", "{87A85F5E-4E6D-4D04-8BD9-1B6DEE697E45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIS.MvcFramework", "MWS.MvcFramework\SIS.MvcFramework.csproj", "{87A85F5E-4E6D-4D04-8BD9-1B6DEE697E45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{8699FB15-A683-49C1-BA8C-B7651AB8B4D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFirstMvcApp", "MyFirstMvcApp\MyFirstMvcApp.csproj", "{7433D8D2-E3B8-4CE8-A063-C14B4ECBCC70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFirstMvcApp", "MyFirstMvcApp\MyFirstMvcApp.csproj", "{7433D8D2-E3B8-4CE8-A063-C14B4ECBCC70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
