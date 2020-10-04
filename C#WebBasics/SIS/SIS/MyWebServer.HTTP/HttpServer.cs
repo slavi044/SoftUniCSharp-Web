@@ -1,11 +1,10 @@
 ﻿namespace SIS.HTTP
 {
     using System;
+    using System.Text;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Net;
     using System.Net.Sockets;
-    using System.Text;
     using System.Threading.Tasks;
 
     public class HttpServer : IHttpServer
@@ -71,17 +70,26 @@
 
                     string requestAsString = Encoding.UTF8.GetString(data.ToArray());
 
-                    HttpRequest requset = new HttpRequest(requestAsString);
+                    HttpRequest request = new HttpRequest(requestAsString);
                     Console.WriteLine(requestAsString);
 
                     //TODO:Extract info requstAsString
 
-                    string responseHtml = "<h1>Welcome</h1>" + requset.Headers.FirstOrDefault(x => x.Name == "User-Agent")?.Value;
-                    byte[] responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
+                    HttpResponse response;
+                    if (this.routeTable.ContainsKey(request.Path))
+                    {
+                        Func<HttpRequest, HttpResponse> action = this.routeTable[request.Path];
+                        response = action(request);
+                    }
+                    else
+                    {
+                        //Not Found 404
+                        response = new HttpResponse("text/html", new byte[0], HttpStatusCode.NotFound);
+                    }
 
-                    HttpResponse response = new HttpResponse("text/html", responseBodyBytes);
-                    response.Headers.Add(new Header("Server", "SIS Server 1.0"));
+
                     response.Cookies.Add(new ResponseCookie("sid", Guid.NewGuid().ToString()) { HttpOnly = true, MaxAge = 60 * 24 * 60 * 60 });
+                    response.Headers.Add(new Header("Server", "SIS Server 1.0"));
 
                     byte[] responseHeaderBytes = Encoding.UTF8.GetBytes(response.ToString());
 
