@@ -14,5 +14,12 @@
         {
             return this.View();
         }
+
+        public HttpResponse DoLogin(HttpRequest request)
+        {
+            //TODO: Implement
+
+            return this.Redirect("/");
+        }
     }
 }

@@ -67,7 +67,8 @@
                     Console.WriteLine(requestAsString);
 
                     HttpResponse response;
-                    Route route = this.routeTable.FirstOrDefault(x => x.Path == request.Path);
+                    Route route = this.routeTable.FirstOrDefault(x => string.Compare(x.Path, request.Path, true) == 0
+                                                    && x.Method == request.Method);
 
                     if (route != null)
                     {
