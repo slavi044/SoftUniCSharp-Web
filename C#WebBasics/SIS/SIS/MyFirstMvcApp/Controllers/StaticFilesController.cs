@@ -2,17 +2,37 @@
 {
     using SIS.HTTP;
     using SIS.MvcFramework;
-
+    using System;
     using System.IO;
 
     public class StaticFilesController : Controller
     {
         public HttpResponse Favicon(HttpRequest request)
         {
-            byte[] fileBytes = File.ReadAllBytes("wwwroot/favicon.ico");
-            HttpResponse response = new HttpResponse("image/vnd.microsoft.icon", fileBytes);
+            return this.File("wwwroot/favicon.ico", "image/vnd.microsoft.icon");
+        }
 
-            return response;
+        public HttpResponse BootstrapJs(HttpRequest request)
+        {
+            return this.File("wwwroot/js/bootstrap.bundle.min.js", "text/javascript");
+        }
+
+        internal HttpResponse BootstrapCss(HttpRequest request)
+        {
+            return this.File("wwwroot/css/bootstrap.min.css", "text/css");
+        }
+
+        internal HttpResponse CustomCss(HttpRequest request)
+        {
+            return this.File("wwwroot/css/custom.css", "text/css"); ;
+        }
+
+        internal HttpResponse CustomJs(HttpRequest request)
+        {
+            return this.File("wwwroot/js/custom.js", "text/javascript");
         }
     }
 }
+/*
+/ js /custom.js", new StaticFil
+", */
