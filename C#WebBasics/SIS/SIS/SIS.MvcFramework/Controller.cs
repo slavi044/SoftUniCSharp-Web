@@ -14,6 +14,8 @@
             this.viewEngine = new SisViewEngine();
         }
 
+        public HttpRequest Request { get; set; }
+
         public HttpResponse View(
             object viewModel = null,
             [CallerMemberName] string viewPath = null)

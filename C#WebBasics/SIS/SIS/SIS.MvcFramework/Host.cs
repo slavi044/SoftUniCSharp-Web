@@ -9,8 +9,6 @@
     using System.Linq;
     using System;
     using MyFirstMvcApp;
-    using System.Reflection;
-    using System.Security.Principal;
 
     public static class Host
     {
@@ -72,8 +70,10 @@
 
                     routeTable.Add(new Route(url, httpMethod, (request) =>
                     {
-                        var intence = Activator.CreateInstance(controllerType);
-                        HttpResponse response = method.Invoke(intence, new[] { request }) as HttpResponse;
+                        Controller instence = Activator.CreateInstance(controllerType) as Controller;
+                        instence.Request = request;
+
+                        HttpResponse response = method.Invoke(instence, new object[] { }) as HttpResponse;
 
                         return response;
                     }));
