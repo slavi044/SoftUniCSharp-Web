@@ -1,0 +1,19 @@
+﻿namespace MyFirstMvcApp
+{
+    using SIS.HTTP;
+
+    public class HttpGetAttribute : BaseHttpAttribute
+    {
+        public HttpGetAttribute()
+        {
+
+        }
+
+        public HttpGetAttribute(string url)
+        {
+            this.Url = url;
+        }
+
+        public override HttpMethod Method => HttpMethod.Get;
+    }
+}
