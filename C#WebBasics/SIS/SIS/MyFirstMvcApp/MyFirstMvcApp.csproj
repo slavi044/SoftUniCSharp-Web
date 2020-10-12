@@ -53,6 +53,9 @@
     <None Update="wwwroot\css\custom.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="wwwroot\img\cat.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="wwwroot\img\dog.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

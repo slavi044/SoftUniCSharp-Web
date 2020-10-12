@@ -12,8 +12,9 @@
 
     public static class Host
     {
-        public static async Task CreateHostAsync(IMvcApplication application, int port)
+        public static async Task CreateHostAsync(IMvcApplication application, int port = 80)
         {
+            // TODO: {controller}/{action}/{id}
             List<Route> routeTable = new List<Route>();
 
             AutoRegisterStaticFile(routeTable);
@@ -22,41 +23,37 @@
             application.ConfigureServices();
             application.Configure(routeTable);
 
+            Console.WriteLine("All registered routes:");
+            foreach (var route in routeTable)
+            {
+                Console.WriteLine($"{route.Method} {route.Path}");
+            }
+
             IHttpServer server = new HttpServer(routeTable);
 
-            Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", "http://localhost/");
-
+            // Process.Start(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", "http://localhost/");
             await server.StartAsync(port);
         }
 
         private static void AutoRegisterRoutes(List<Route> routeTable, IMvcApplication application)
         {
-            var controllerTypes = application
-                .GetType()
-                .Assembly
-                .GetTypes()
+            var controllerTypes = application.GetType().Assembly.GetTypes()
                 .Where(x => x.IsClass && !x.IsAbstract && x.IsSubclassOf(typeof(Controller)));
-
             foreach (var controllerType in controllerTypes)
             {
-                Console.WriteLine(controllerType.Name);
-
-                var methods = controllerType
-                    .GetMethods()
-                    .Where(x => x.IsPublic && !x.IsStatic && x.DeclaringType == controllerType &&
-                    !x.IsAbstract && !x.IsConstructor && !x.IsSpecialName);
-
+                var methods = controllerType.GetMethods()
+                    .Where(x => x.IsPublic && !x.IsStatic && x.DeclaringType == controllerType
+                    && !x.IsAbstract && !x.IsConstructor && !x.IsSpecialName);
                 foreach (var method in methods)
                 {
-                    string url = "/" + controllerType.Name.Replace("Controller", string.Empty) 
+                    var url = "/" + controllerType.Name.Replace("Controller", string.Empty)
                         + "/" + method.Name;
 
-                    BaseHttpAttribute attribute = method
-                        .GetCustomAttributes(false)
+                    var attribute = method.GetCustomAttributes(false)
                         .Where(x => x.GetType().IsSubclassOf(typeof(BaseHttpAttribute)))
                         .FirstOrDefault() as BaseHttpAttribute;
 
-                    HttpMethod httpMethod = HttpMethod.Get;
+                    var httpMethod = HttpMethod.Get;
 
                     if (attribute != null)
                     {
@@ -70,15 +67,11 @@
 
                     routeTable.Add(new Route(url, httpMethod, (request) =>
                     {
-                        Controller instence = Activator.CreateInstance(controllerType) as Controller;
-                        instence.Request = request;
-
-                        HttpResponse response = method.Invoke(instence, new object[] { }) as HttpResponse;
-
+                        var instance = Activator.CreateInstance(controllerType) as Controller;
+                        instance.Request = request;
+                        var response = method.Invoke(instance, new object[] { }) as HttpResponse;
                         return response;
                     }));
-
-                    Console.WriteLine(" - " + url);
                 }
             }
         }
@@ -86,17 +79,14 @@
         private static void AutoRegisterStaticFile(List<Route> routeTable)
         {
             var staticFiles = Directory.GetFiles("wwwroot", "*", SearchOption.AllDirectories);
-
             foreach (var staticFile in staticFiles)
             {
-                string url = staticFile
-                    .Replace("wwwroot", string.Empty)
+                var url = staticFile.Replace("wwwroot", string.Empty)
                     .Replace("\\", "/");
-
                 routeTable.Add(new Route(url, HttpMethod.Get, (request) =>
                 {
-                    byte[] fileContent = File.ReadAllBytes(staticFile);
-                    string fileExt = new FileInfo(staticFile).Extension;
+                    var fileContent = File.ReadAllBytes(staticFile);
+                    var fileExt = new FileInfo(staticFile).Extension;
                     var contentType = fileExt switch
                     {
                         ".txt" => "text/plain",
@@ -108,7 +98,7 @@
                         ".gif" => "image/gif",
                         ".ico" => "image/vnd.microsoft.icon",
                         ".html" => "text/html",
-                        _ => "text/plain"
+                        _ => "text/plain",
                     };
 
                     return new HttpResponse(contentType, fileContent, HttpStatusCode.Ok);

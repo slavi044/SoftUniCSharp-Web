@@ -1,11 +1,10 @@
 ﻿namespace MyFirstMvcApp.Data
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
+    using System.ComponentModel.DataAnnotations;
 
     public class UserCard
     {
+        [Required]
         public string UserId { get; set; }
         public virtual User User { get; set; }
 

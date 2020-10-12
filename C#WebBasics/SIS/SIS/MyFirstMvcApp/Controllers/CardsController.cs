@@ -1,6 +1,7 @@
 ﻿namespace MyFirstMvcApp.Controllers
 {
     using MyFirstMvcApp.Data;
+    using MyFirstMvcApp.ViewModels;
     using SIS.HTTP;
     using SIS.MvcFramework;
     using System;
@@ -38,9 +39,21 @@
             return this.Redirect("/");
         }
 
-        private HttpResponse Error(string v)
+        // /cards/all
+        public HttpResponse All()
         {
-            throw new NotImplementedException();
+            var db = new ApplicationDbContext();
+            var cardsViewModel = db.Cards.Select(x => new CardViewModel
+            {
+                Name = x.Name,
+                Description = x.Description,
+                Attack = x.Attack,
+                Health = x.Health,
+                ImageUrl = x.ImageUrl,
+                Type = x.Keyword,
+            }).ToList();
+
+            return this.View(new AllCardsViewModel { Cards = cardsViewModel });
         }
 
         // /cards/collection

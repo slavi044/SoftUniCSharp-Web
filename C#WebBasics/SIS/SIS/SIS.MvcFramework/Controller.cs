@@ -26,11 +26,7 @@
                 "/" + viewPath + ".cshtml");
             viewContent = this.viewEngine.GetHtml(viewContent, viewModel);
 
-            string layout = System.IO.File.ReadAllText("Views/Shared/_Layout.cshtml");
-            layout = layout.Replace("@RenderBody()", "____VIEW_GOES_HERE____");
-            layout = this.viewEngine.GetHtml(layout, viewModel);
-
-            string responseHtml = layout.Replace("____VIEW_GOES_HERE____", viewContent);
+            string responseHtml = this.PutViewInLayout(viewContent, viewModel);
 
             byte[] responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
             HttpResponse response = new HttpResponse("text/html", responseBodyBytes);
@@ -48,9 +44,30 @@
 
         public HttpResponse Redirect(string url)
         {
-            var response = new HttpResponse(HttpStatusCode.Found);
+            HttpResponse response = new HttpResponse(HttpStatusCode.Found);
             response.Headers.Add(new Header("Location", url));
+
             return response;
+        }
+
+        public HttpResponse Error(string errorText)
+        {
+            string viewContent = $"<div class=\"alert alert-danger\" role=\"alert\">{errorText}</div>";
+            string responseHtml = this.PutViewInLayout(viewContent);
+            byte[] responseBodyBytes = Encoding.UTF8.GetBytes(responseHtml);
+            HttpResponse response = new HttpResponse("text/html", responseBodyBytes, HttpStatusCode.ServerError);
+
+            return response;
+        }
+
+        private string PutViewInLayout(string viewContent, object viewModel = null)
+        {
+            var layout = System.IO.File.ReadAllText("Views/Shared/_Layout.cshtml");
+            layout = layout.Replace("@RenderBody()", "____VIEW_GOES_HERE____");
+            layout = this.viewEngine.GetHtml(layout, viewModel);
+            var responseHtml = layout.Replace("____VIEW_GOES_HERE____", viewContent);
+
+            return responseHtml;
         }
     }
 }

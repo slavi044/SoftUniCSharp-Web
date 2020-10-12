@@ -6,13 +6,11 @@
     {
         public ApplicationDbContext()
         {
-
         }
 
         public ApplicationDbContext(DbContextOptions dbContextOptions)
-            :base(dbContextOptions)
+            : base(dbContextOptions)
         {
-
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -25,10 +23,8 @@
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserCard>(entity =>
-            {
-                entity.HasKey(e => new { e.CardId, e.UserId });
-            });
+            modelBuilder.Entity<UserCard>().HasKey(x => new { x.UserId, x.CardId });
+            base.OnModelCreating(modelBuilder);
         }
 
         public DbSet<User> Users { get; set; }

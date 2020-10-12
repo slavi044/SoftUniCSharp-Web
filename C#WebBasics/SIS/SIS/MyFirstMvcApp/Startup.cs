@@ -12,12 +12,11 @@
     {
         public void ConfigureServices()
         {
-            
         }
 
         public void Configure(List<Route> routeTable)
         {
-            new ApplicationDbContext().Database.MigrateAsync();
+            new ApplicationDbContext().Database.Migrate();
         }
     }
 }

@@ -19,13 +19,12 @@
 
         public async Task StartAsync(int port)
         {
-            TcpListener tcpListener = new TcpListener(IPAddress.Loopback, port);
+            TcpListener tcpListener =
+                new TcpListener(IPAddress.Loopback, port);
             tcpListener.Start();
-
             while (true)
             {
                 TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
-
                 ProcessClientAsync(tcpClient);
             }
         }
@@ -36,21 +35,20 @@
             {
                 using (NetworkStream stream = tcpClient.GetStream())
                 {
-                    int position = 0;
-                    byte[] buffer = new byte[HttpConstants.BufferSize];
+                    // TODO: research if there is faster data structure for array of bytes
                     List<byte> data = new List<byte>();
-
+                    int position = 0;
+                    byte[] buffer = new byte[HttpConstants.BufferSize]; // chunk
                     while (true)
                     {
-                        int count = await stream.ReadAsync(buffer, 0, buffer.Length);
-
+                        int count =
+                            await stream.ReadAsync(buffer, position, buffer.Length);
                         position += count;
 
                         if (count < buffer.Length)
                         {
-                            byte[] partialBuffer = new byte[count];
+                            var partialBuffer = new byte[count];
                             Array.Copy(buffer, partialBuffer, count);
-
                             data.AddRange(partialBuffer);
 
                             break;
@@ -61,14 +59,15 @@
                         }
                     }
 
+                    // byte[] => string (text)
                     string requestAsString = Encoding.UTF8.GetString(data.ToArray());
-
                     HttpRequest request = new HttpRequest(requestAsString);
-                    Console.WriteLine(requestAsString);
+                    Console.WriteLine($"{request.Method} {request.Path} => {request.Headers.Count} headers");
 
                     HttpResponse response;
-                    Route route = this.routeTable.FirstOrDefault(x => string.Compare(x.Path, request.Path, true) == 0
-                                                    && x.Method == request.Method);
+                    Route route = this.routeTable.FirstOrDefault(
+                        x => string.Compare(x.Path, request.Path, true) == 0
+                            && x.Method == request.Method);
 
                     if (route != null)
                     {
@@ -76,13 +75,19 @@
                     }
                     else
                     {
-                        //Not Found 404
+                        // Not Found 404
                         response = new HttpResponse("text/html", new byte[0], HttpStatusCode.NotFound);
                     }
 
+                    response.Headers.Add(new Header("Server", "SUS Server 1.0"));
 
-                    response.Cookies.Add(new ResponseCookie("sid", Guid.NewGuid().ToString()) { HttpOnly = true, MaxAge = 60 * 24 * 60 * 60 });
-                    response.Headers.Add(new Header("Server", "SIS Server 1.0"));
+                    Cookie sessionCookie = request.Cookies.FirstOrDefault(x => x.Name == HttpConstants.SessionCookieName);
+                    if (sessionCookie != null)
+                    {
+                        ResponseCookie responseSessionCookie = new ResponseCookie(sessionCookie.Name, sessionCookie.Value);
+                        responseSessionCookie.Path = "/";
+                        response.Cookies.Add(responseSessionCookie);
+                    }
 
                     byte[] responseHeaderBytes = Encoding.UTF8.GetBytes(response.ToString());
 
