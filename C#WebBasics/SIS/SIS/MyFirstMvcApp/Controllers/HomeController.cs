@@ -1,5 +1,6 @@
 ﻿namespace MyFirstMvcApp.Controllers
 {
+    using Microsoft.EntityFrameworkCore;
     using MyFirstMvcApp.ViewModels;
     
     using SIS.HTTP;
@@ -11,13 +12,14 @@
         [HttpGet("/")]
         public HttpResponse Index()
         {
-            IndexViewModel viewModel = new IndexViewModel();
-            viewModel.CurrentYear = DateTime.Now.Year;
-            viewModel.Message = "Welcome to Batlecards!";
+            var viewModel = new IndexViewModel();
+            viewModel.CurrentYear = DateTime.UtcNow.Year;
+            viewModel.Message = "Welcome to Battle Cards";
 
             return this.View(viewModel);
         }
 
+        // GET /home/about
         public HttpResponse About()
         {
             return this.View();
