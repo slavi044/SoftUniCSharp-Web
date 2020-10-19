@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SulsExamPrep.Services
+﻿namespace SulsExamPrep.Services
 {
     public interface ISubmissionService
     {
+        void Create(string problemId, string userId, string code);
+
+        void Delete(string id);
     }
 }
