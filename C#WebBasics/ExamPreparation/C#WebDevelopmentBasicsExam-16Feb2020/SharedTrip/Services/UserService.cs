@@ -36,8 +36,8 @@ namespace SharedTrip.Services
         public string GetUserId(string username, string password)
         {
             string hashPassword = ComputeHash(password);
-            User user =  this.db.Users
-                .FirstOrDefault(x => x.Username == username && x.Password == password);
+            User user = this.db.Users.FirstOrDefault(
+                x => x.Username == username && x.Password == hashPassword);
 
             return user?.Id;
         }
