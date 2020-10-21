@@ -2,6 +2,8 @@
 {
     using System.Collections.Generic;
     using Microsoft.EntityFrameworkCore;
+    using SharedTrip.Controllers;
+    using SharedTrip.Services;
     using SIS.HTTP;
     using SIS.MvcFramework;
 
@@ -14,7 +16,7 @@
 
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-            
+            serviceCollection.Add<IUserService, UserService>();
         }
     }
 }
