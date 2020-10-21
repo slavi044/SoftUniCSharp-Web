@@ -18,7 +18,8 @@ namespace SharedTrip.Controllers
 
         public HttpResponse All()
         {
-            return this.View();
+            var trips = this.tripsService.GetAll();
+            return this.View(trips);
         }
 
         public HttpResponse Add()

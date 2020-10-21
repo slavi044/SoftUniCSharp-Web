@@ -1,4 +1,5 @@
 ﻿using SharedTrip.ViewModels.Trips;
+using System.Collections.Generic;
 
 namespace SharedTrip.Services
 {
@@ -6,6 +7,6 @@ namespace SharedTrip.Services
     {
         void Create(AddTripInputModel trip);
 
-
+        IEnumerable<TripViewModel> GetAll();
     }
 }
