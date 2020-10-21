@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace SharedTrip.ViewModels.Trips
 {
@@ -10,7 +11,11 @@ namespace SharedTrip.ViewModels.Trips
 
         public string EndPoint { get; set; }
 
+        public string FullName => $"{this.StartPoint} - {this.EndPoint}";
+
         public DateTime DepartureTime { get; set; }
+
+        public string DepartureTimeAsString => this.DepartureTime.ToString(CultureInfo.GetCultureInfo("bg-BG"));
 
         public int AvailableSeats => this.Seats - this.UsedSeats;
 

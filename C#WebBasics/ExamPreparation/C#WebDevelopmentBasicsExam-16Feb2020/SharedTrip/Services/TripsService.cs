@@ -16,6 +16,41 @@ namespace SharedTrip.Services
             this.db = db;
         }
 
+        public bool AddUserToTrip(string userId, string tripId)
+        {
+            var userInTrip = this.db.UserTrips.Any(x => x.UserId == userId && x.TripId == tripId);
+
+            if (userInTrip)
+            {
+                return false;
+            }
+
+            var userTrip = new UserTrip
+            {
+                TripId = tripId,
+                UserId = userId,
+            };
+
+            this.db.UserTrips.Add(userTrip);
+            this.db.SaveChanges();
+
+            return true;
+        }
+
+
+        public bool HasAvailableSeats(string tripId)
+        {
+            var trip = this.db
+                .Trips
+                .Where(x => x.Id == tripId)
+                .Select(x => new { x.Seats, TakenSeats = x.UserTrips.Count() })
+                .FirstOrDefault();
+
+            var availableSeats = trip.Seats - trip.TakenSeats;
+
+            return availableSeats > 0;
+        }
+
         public void Create(AddTripInputModel trip)
         {
             Trip dbTrip = new Trip
@@ -46,6 +81,25 @@ namespace SharedTrip.Services
                     Id = x.Id,
                 })
                 .ToList();
+        }
+
+        public TripDetailsViewModel GetDetails(string id)
+        {
+            return this.db
+                .Trips
+                .Where(x => x.Id == id)
+                .Select(x => new TripDetailsViewModel
+                {
+                    DepartureTime = x.DepartureTime,
+                    Description = x.Description,
+                    EndPoint = x.EndPoint,
+                    Id = x.Id,
+                    ImagePath = x.ImagePath,
+                    Seats = x.Seats,
+                    StartPoint = x.StartingPoint,
+                    UsedSeats = x.UserTrips.Count()
+                })
+                .FirstOrDefault();
         }
     }
 }
