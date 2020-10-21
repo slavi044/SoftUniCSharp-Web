@@ -4,6 +4,7 @@ using SIS.HTTP;
 using SIS.MvcFramework;
 using System;
 using System.Globalization;
+using System.Linq;
 
 namespace SharedTrip.Controllers
 {
@@ -18,7 +19,7 @@ namespace SharedTrip.Controllers
 
         public HttpResponse All()
         {
-            var trips = this.tripsService.GetAll();
+            ViewAllTripsModel trips = new ViewAllTripsModel() { Trips = this.tripsService.GetAll().ToList() };
             return this.View(trips);
         }
 
