@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace MySuls
 {
-    class Program
+    public class Program
     {
         static async Task Main()
         {

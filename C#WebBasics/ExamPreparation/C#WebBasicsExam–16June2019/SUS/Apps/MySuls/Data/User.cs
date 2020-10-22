@@ -22,7 +22,6 @@ namespace MySuls.Data
         public string Email { get; set; }
 
         [Required]
-        [MaxLength(20)]
         public string Password { get; set; }
 
         public virtual ICollection<Submission> Submissions { get; set; }

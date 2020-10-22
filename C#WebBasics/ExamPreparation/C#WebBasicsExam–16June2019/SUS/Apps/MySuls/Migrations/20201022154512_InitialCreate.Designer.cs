@@ -10,7 +10,7 @@ using MySuls.Data;
 namespace MySuls.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201022140759_InitialCreate")]
+    [Migration("20201022154512_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,8 +84,7 @@ namespace MySuls.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")
                         .IsRequired()

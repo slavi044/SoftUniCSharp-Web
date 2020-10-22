@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MySuls.Data;
+using MySuls.Services;
 using SUS.HTTP;
 using SUS.MvcFramework;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace MySuls
 
         public void ConfigureServices(IServiceCollection serviceCollection)
         {
-
+            serviceCollection.Add<IUsersService, UsersService>();
         }
     }
 }
