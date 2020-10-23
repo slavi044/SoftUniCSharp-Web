@@ -11,7 +11,7 @@ namespace MySuls.Controllers
         public ProblemsController(IProblemService problemService)
         {
             this.problemService = problemService;
-        }
+        } 
 
         public HttpResponse Create()
         {
