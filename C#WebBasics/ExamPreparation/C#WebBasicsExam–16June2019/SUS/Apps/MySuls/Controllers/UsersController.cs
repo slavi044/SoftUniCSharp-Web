@@ -1,4 +1,5 @@
-﻿using MySuls.Services;
+﻿using MySuls.Data;
+using MySuls.Services;
 using MySuls.ViewModels.Users;
 using SUS.HTTP;
 using SUS.MvcFramework;
@@ -56,6 +57,25 @@ namespace MySuls.Controllers
             this.usersService.CreateUser(input.Username, input.Email, input.Password);
 
             return this.Redirect("/Users/Login");
+        }
+
+        public HttpResponse Login()
+        {
+            return this.View();
+        }
+
+        [HttpPost]
+        public HttpResponse Login(string username, string password)
+        {
+            string user = this.usersService.GetUserId(username, password);
+
+            if (user == null)
+            {
+                return this.Error("Invalid username or password.");
+            }
+
+            this.SignIn(user);
+            return this.Redirect("/");
         }
     }
 }
