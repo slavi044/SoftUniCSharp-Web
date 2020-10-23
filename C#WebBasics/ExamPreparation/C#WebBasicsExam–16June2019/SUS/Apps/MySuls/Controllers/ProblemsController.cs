@@ -45,5 +45,16 @@ namespace MySuls.Controllers
 
             return this.Redirect("/");
         }
+
+        public HttpResponse Details(string id)
+        {
+            if (!this.IsUserSignedIn())
+            {
+                return this.Redirect("/Users/Login");
+            }
+
+            var viewModel = this.problemService.GetById(id);
+            return this.View(viewModel);
+        }
     }
 }

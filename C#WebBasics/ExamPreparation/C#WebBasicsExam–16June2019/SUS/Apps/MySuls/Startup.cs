@@ -18,6 +18,7 @@ namespace MySuls
         {
             serviceCollection.Add<IUsersService, UsersService>();
             serviceCollection.Add<IProblemService, ProblemService>();
+            serviceCollection.Add<ISubmissionService, SubmissionService>();
         }
     }
 }
